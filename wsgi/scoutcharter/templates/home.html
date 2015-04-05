@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block style %}
+    <link href="{{ STATIC_URL }}css/home.css" rel="stylesheet">        
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid main">
+		{% if scouter.role in 'leader, parent' and not scout %}
+			<div class="row bottom-margin">
+			    <div class="col-lg-12">
+		        	{% if scouter.role == 'leader' %}
+						<span>
+						<a class="btn btn-info pull-right open-export-form">
+							Export ScoutNET File
+						</a>
+						<div id="export-form" class="add-form translucent pull-right" style="z-index: 999999; position: relative;">
+							<form class="form-inline" action="/export">
+								<div class="form-group">
+									<input type="text" class="form-control datepicker datepicker-input" id="export-from-date" placeholder="From date">
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control datepicker datepicker-input" id="export-to-date" placeholder="To date">
+								</div>
+								<a class="btn btn-default btn-link-short open-export-form">Close</a>
+								<input type="submit" class="btn btn-primary btn-short save-export" value="Export"></input>
+							</form>
+						</div>
+						</span>
+		        	{% endif %}
+			    	<h1>Scout List</h1>
+                        <table class="table" style="table-layout:fixed;">
+			        		<thead>
+			        			<tr>
+			        				<th width="150px">Name</th>
+			        				<th>Patrol</th>
+			        				<th>Rank</th>
+			        				<th width="70px">Age</th>
+			        				<th width="160px">Birthday</th>
+			        				<th width="140px">Phone</th>
+			        				<th width="70px">Goals</th>
+			        				{% if scouter.role in 'leader' %}
+			        					<th width="350px">Status</th>
+			        				{% endif %}
+			        			</tr>
+			        		</thead>
+			        		<tbody>
+								{% for scout in scout_list %}
+									<tr>
+										<td>
+											<a href="/home/scout/{{ scout.id }}">{{ scout.first_name }} {{ scout.last_name }}</a>
+										</td>
+										<td>{{ scout.patrol }}</td>
+										<td>{{ scout.rank }}</td>
+										<td>{{ scout.age }}</td>
+										<td>{{ scout.birth_date }}</td>
+										<td>{{ scout.phone_number }}</td>
+										<td>{{ scout.mb_goals }}</td>
+				        				{% if scouter.role in 'leader' %}
+                                            <td style="overflow: hidden; white-space: nowrap;">
+                                                {{ scout.status }}
+                                            </td>
+				        				{% endif %}
+									</tr>
+								{% endfor %}
+			        		</tbody>
+			        	</table>
+			    </div>
+			</div>
+		{% else %}
+			<div class="row bottom-margin">
+			    <div class="col-lg-12">
+			        <div class="rank-header">
+			            {% if scouter.role in 'leader, parent' %}
+			            	<h5 class="pull-right text-right">
+
+                                <a href="/scouter/edit/{{ scout_dict.username }}?next={{ request.path }}">{{ scout_dict.name }}</a>
+
+			            		{% if scout.birth_date %}
+			            			<small>Age {{ scout_dict.age }}</small><br />
+			            			<small>Turns {{ scout_dict.turns_age }} on {{ scout_dict.turns_month }}</small><br />
+			            			<small>{{ scout_dict.phone_number }}</small>
+			            		{% endif %}
+			            	</h5>
+			            {% endif %}
+			            <h1>
+			            	Ranks
+							{% if scouter.role in 'leader' %}
+								<a class="open-rank-form">
+									<i class="icon-plus-sign rank-add"></i>
+								</a>
+								<div id="rank-form" class="add-form translucent" style="z-index: 999999; position: absolute;">
+									<form class="form-inline">
+										<div class="form-group">
+											<input type="text" class="form-control typeahead-rank" id="rank-name" placeholder="Add rank">
+										</div>
+										<div class="form-group">
+											<input type="text" class="form-control datepicker datepicker-input" id="rank-date" placeholder="Date earned">
+										</div>
+										<a class="btn btn-default btn-link-short open-rank-form">Close</a>
+										<button class="btn btn-primary btn-short save-rank">Save</button>
+									</form>
+								</div>
+							{% endif %}
+			            </h1>
+			        </div>
+					<!-- -------------------------------------------------------------------- -->
+					<!-- ------------------------------ Ranks ------------------------------- -->
+					<!-- -------------------------------------------------------------------- -->
+
+					<!-- Rank images come from http://clipart.usscouts.org/library/BSA_Boy_Scout_Ranks/ -->
+                    <div class="table-responsive">
+			        <table class="table">
+			        	<tbody>
+			        		<tr>
+			                    {% for scout_rank in scout_ranks_list %}
+		                        	{% if scout_rank.date_earned %}
+			                        	<td id="scout-rank-{{ scout_rank.id }}" class="rank-td">
+                                            <div>
+                                                <a href="{% if scouter.role == 'leader' %}/rank-requirements/{{ scout_rank.id }}{% else %}#{% endif %}" data-toggle="tooltip" data-html="true" class="tooltip-activate" title="<strong>{{ scout_rank.rank_name }}</strong><br />{{ scout_rank.date_earned }}">
+                                                    <img src="{{ STATIC_URL }}img/ranks/{{ scout_rank.image_name }}" width="100%">
+                                                </a>
+                                            </div>
+                                            {% if scouter.role == 'leader' %}
+                                                <div>
+                                                    <a class="delete-rank hand-pointer text-center" id="{{ scout_rank.id }}"><i class="icon-minus-sign"></i></a>
+                                                </div>
+                                            {% endif %}
+				                        </td>
+		                        	{% else %}
+				                        <td id="scout-rank-{{ scout_rank.rank_id }}">
+                                            <a href="{% if scouter.role == 'leader' %}/rank-requirements?scout_id={{ scout.id }}&rank_id={{ scout_rank.rank_id }}{% else %}#{% endif %}">
+                                                <img src="{{ STATIC_URL }}img/ranks/{{ scout_rank.image_ph_name }}" width="100%">
+                                            </a>
+				                        </td>
+		                        	{% endif %}
+			                    {% endfor %}
+			            	</tr>
+			            </tbody>
+                    </table>
+                    </div>
+			    </div>
+			</div>
+			<div class="row">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="earned-mb-div" class="merit-badge-header">
+                                <h1>Merit Badges Earned
+                                    {% if scouter.role == 'leader' %}
+                                        <a class="open-earned-mb-form">
+                                            <i class="icon-plus-sign earned-mb-add"></i>
+                                        </a>
+                                        <div id="earned-mb-form" class="add-form translucent" style="z-index: 999999; position: absolute;">
+                                            <form class="form-inline">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control typeahead-earned-mb" id="earned-mb-name" placeholder="Add merit badge">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control datepicker datepicker-input" id="earned-mb-date" placeholder="Date earned">
+                                                </div>
+                                                <a class="btn btn-default btn-link-short open-earned-mb-form">Close</a>
+                                                <button class="btn btn-primary btn-short save-earned-mb">Save</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </h1>
+                                <!-- -------------------------------------------------------------------- -->
+                                <!-- --------------------------- Merit Badges --------------------------- -->
+                                <!-- -------------------------------------------------------------------- -->
+
+                                <!-- Merit badge images come from http://clipart.usscouts.org/library/BSA_Boy_Scout_MeritBadges/ -->
+                                {% for scout_merit_badge_earned in scout_merit_badges_earned %}
+                                    <div class="pull-left mb-card">
+                                        <img src="{{ STATIC_URL }}img/merit_badges/{{ scout_merit_badge_earned.merit_badge.image_name }}" width="80" height="80" class="top-margin-small" style="margin: auto; display: block;">
+                                        <div>
+                                            <h6 style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                                                {{ scout_merit_badge_earned.merit_badge.name }}</h6>
+                                                <h6 class="text-muted">{{ scout_merit_badge_earned.date_earned }}</h6>
+                                            
+                                        </div>
+                                        {% if scouter.role == 'leader' %}
+                                            <a class="delete-earned-mb earned-mb-delete hand-pointer" id="{{ scout_merit_badge_earned.id }}"><i class="icon-minus-sign"></i></a>
+                                        {% endif %}
+                                    </div>  
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end col-lg-8 -->
+			    <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="planned-mb-div" class="merit-badge-header">
+                                <h1>
+                                    Planned
+                                    {% if scouter.role == 'scout' %}
+                                        <a class="open-planned-mb-form">
+                                            <i class="icon-plus-sign planned-mb-add"></i>
+                                        </a>
+                                        <div id="planned-mb-form" class="add-form translucent" style="z-index: 999999; position: absolute;">
+                                            <form class="form-inline">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control typeahead-planned-mb" id="planned-mb-name" placeholder="Add merit badge">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control datepicker datepicker-input" id="planned-mb-date" placeholder="Date planned">
+                                                </div>
+                                                <a class="btn btn-default btn-link-short open-planned-mb-form">Close</a>
+                                                <button class="btn btn-primary btn-short save-planned-mb">Save</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </h1>
+                                {% for scout_merit_badge_planned in scout_merit_badges_planned_list %}
+                                    <div class="row" id="planned-mb-{{ scout_merit_badge_planned.id }}">
+                                        <div class="col-lg-4">
+                                            <img src="{{ STATIC_URL }}img/merit_badges/{{ scout_merit_badge_planned.merit_badge.image_name }}" width="80" height="80">
+                                            {% if scouter.role == 'scout' %}
+                                                <a class="delete-planned-mb badge-delete" id="{{ scout_merit_badge_planned.id }}"><i class="icon-minus-sign"></i></a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-lg-8"> 
+                                            <h3 class="compact">
+                                                {{ scout_merit_badge_planned.merit_badge.name }} <small>{{ scout_merit_badge_planned.goal_date }}</small>
+                                            </h3>
+                                            {% if scout_merit_badge_planned.book_in_library %}
+                                                {% if scout_merit_badge_planned.book_date_requested and not scout_merit_badge_planned.book_date_borrowed %}
+                                                    Book requested, you will be contacted soon<br />
+                                                {% elif scout_merit_badge_planned.book_date_borrowed %}
+                                                    Book checked out (due {{ scout_merit_badge_planned.book_date_due }})<br />
+                                                {% else %}
+                                                    <a class="request-mbbook" href="#" id="{{ scout_merit_badge_planned.merit_badge.id }}">Request book</a><br />
+                                                {% endif %}
+                                            {% else %}
+					        <a class="request-mbbook" href="#" id="{{ scout_merit_badge_planned.merit_badge.id }}">Request book</a><br />
+                                            {% endif %}
+                                            <a class="view-mbcounselors" id="{{ scout_merit_badge_planned.merit_badge.id }}" href="#">Merit Badge Counselors</a>
+                                            <hr class="dashed-line">
+                                        </div>  
+                                    </div> 
+                                {% endfor %}
+                                {% if scout_merit_badge_books_unplanned %}
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <h3>Books to return</h3>
+                                            {% for scout_merit_badge_book_unplanned in scout_merit_badge_books_unplanned %}
+                                                {% if scout_merit_badge_book_unplanned.date_borrowed %}
+                                                    {{ scout_merit_badge_book_unplanned.merit_badge_book }} - due {{ scout_merit_badge_book_unplanned.date_due }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end col-lg-4 -->
+			</div>
+			{% if scout_notes %}
+				<div class="row">
+                    <div class="col-lg-12 well top-margin-small">
+                        <h3>Leader notes</h3>
+				    	<table class="table table-condensed">
+				    		<thead>
+				    			<tr>
+                                    <th><h4>Date</h4></th>
+                                    <th><h4>Comment</h4></th>
+				    			</tr>
+				    		</thead>
+					    	<tbody>
+					    		{% for scout_note in scout_notes %}
+					    			<tr>
+					    				<td>{{ scout_note.note_date }}</td>
+					    				<td>{{ scout_note.comment }}</td>
+					    			</tr>
+					    		{% endfor %}
+					    	</tbody>
+				    	</table>
+				    </div>
+				</div>
+			{% endif %}
+		{% endif %}
+
+		<!-- -------------------------------------------------------------------- -->
+		<!-- ------------------------------ Modals ------------------------------ -->
+		<!-- -------------------------------------------------------------------- -->
+
+		<div id="mbcounselors-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		</div>
+
+		<div id="export" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h3 id="myModalLabel">Enter Date Range</h3>
+						<p>Enter the start and end dates of the period for which you want to upload advancement data to ScoutNET.  This allows you to not re-import data.</p>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-lg-6">
+								<h4>Enter start date</h4>
+								<input id="export-start-date" type="text" class="input-small datepicker">
+							</div>
+							<div class="col-lg-6">
+								<h4 class="text-right">Enter end date</h4>
+								<input id="export-end-date" type="text" class="input-small pull-right datepicker">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal">Close</button>
+						<button class="btn btn-primary export" data-dismiss="modal">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block script %}
+	<script type="text/javascript">
+		var template_vars = {"csrf_token": "{% csrf_token %}", "static_url": "{{ STATIC_URL }}"}
+	</script>
+    <script src="{{ STATIC_URL }}js/home.js"></script>
+{% endblock %}

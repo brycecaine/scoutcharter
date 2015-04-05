@@ -1,0 +1,5 @@
+[
+	{% for rank in ranks %}
+		"{{ rank }}"{% if not forloop.last %},{% endif %}
+	{% endfor %}
+]
