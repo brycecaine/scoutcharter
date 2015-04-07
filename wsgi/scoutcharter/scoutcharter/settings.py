@@ -110,4 +110,6 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = '/login/'
 
+SENTRY_HASH = os.environ['SENTRY_HASH']
+SENTRY_FIVE_DIGIT = os.environ['SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
