@@ -34,7 +34,7 @@ else:
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',
+    '.rhcloud.com',
 ]
 
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'raven.contrib.django.raven_compat',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,3 +109,5 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_URL = '/login/'
+
+RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
