@@ -34,8 +34,7 @@ else:
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
-    'rhcloud.com',
-    'rhcloud.com.',
+    '*',
 ]
 
 
