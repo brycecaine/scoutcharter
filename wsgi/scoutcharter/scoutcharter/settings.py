@@ -33,7 +33,10 @@ else:
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'rhcloud.com',
+    'rhcloud.com.',
+]
 
 
 # Application definition
