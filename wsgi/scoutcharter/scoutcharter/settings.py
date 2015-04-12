@@ -34,6 +34,7 @@ else:
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
+    '.scoutcharter.com',
     '.rhcloud.com',
 ]
 
