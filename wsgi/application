@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
+import newrelic.agent
+newrelic.agent.initialize()
+
 import os
 import sys
-
-import newrelic.agent
-newrelic.agent.initialize('./app-root/repo/wsgi/newrelic.ini')
 
 ## GETTING-STARTED: make sure the next line points to your settings.py:
 os.environ['DJANGO_SETTINGS_MODULE'] = 'scoutcharter.settings'
