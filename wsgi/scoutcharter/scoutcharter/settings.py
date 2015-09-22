@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(DJ_PROJECT_DIR)
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ['SC_SECRET_KEY']
 
 ON_OPENSHIFT = False
 if os.environ.has_key('OPENSHIFT_REPO_DIR'):
@@ -124,6 +124,6 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = '/login/'
 
-SENTRY_HASH = os.environ['SENTRY_HASH']
-SENTRY_FIVE_DIGIT = os.environ['SENTRY_FIVE_DIGIT']
+SENTRY_HASH = os.environ['SC_SENTRY_HASH']
+SENTRY_FIVE_DIGIT = os.environ['SC_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }

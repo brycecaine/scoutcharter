@@ -573,7 +573,7 @@ def report_list(request):
             scout_rank = scout.rank
 
         p.drawString(x, y, scout_name)
-        p.drawString(3 * x, y, scout_rank)
+        p.drawString(3 * x, y, str(scout_rank))
         p.drawString(5 * x, y, scout_birth_date) 
 
         y -= 0.2 * inch
